@@ -1,0 +1,25 @@
+Role Declaration Page
+Course Section: (CISC 7403)
+Team Number: _______
+Team Members: ______________________________________________________
+
+Declared Roles
+(Teams can list multiple roles per person if shared, or leave one/two lines blank.)
+
+Evaluation Table
+Total must = 100
+
+Reflection (Optional, ≤100 words)
+Briefly describe how the team worked together and how responsibilities were shared.
+
+--- DOCX TABLE 1 ---
+Team Member | Declared Role(s) | Short Description of Contribution
+___________ | Lead / Coordinator | Organized meetings, ensured deadlines were met.
+___________ | Researcher | Collected data, analyzed sources, ran experiments.
+___________ | Writer / Editor | Drafted report, ensured clarity and formatting.
+___________ | Analyst / Developer | Conducted quantitative analysis, coding, modeling.
+--- DOCX TABLE 2 ---
+Teammate Name | Points Given (out of 100) | Comments (optional, 1–2 sentences)
+_____________ |  | 
+_____________ |  | 
+_____________ |  | 

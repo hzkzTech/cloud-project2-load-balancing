@@ -1,0 +1,56 @@
+# CISC 7403 Project II - scalable web service with Nginx load balancing
+#
+#   docker compose up --build
+#
+# Three containers are created:
+#   lb        : Nginx load balancer, the only container that publishes a port (6120)
+#   backend1  : Flask backend instance #1
+#   backend2  : Flask backend instance #2
+# backend1 and backend2 are created from the SAME image (cisc7403/backend:1.0).
+# Backends publish no host port; they are reachable only through the compose
+# network "appnet" by their service names.
+
+name: cisc7403-lb
+
+x-backend: &backend
+  image: cisc7403/backend:1.0
+  build:
+    context: ./backend
+  expose:
+    - "8000"          # documentation only, nothing is published to the host
+  networks:
+    - appnet
+
+services:
+  backend1:
+    <<: *backend
+    container_name: backend1
+    hostname: backend1
+    environment:
+      INSTANCE_NAME: backend1
+      WORK_DELAY_SECONDS: "0.05"
+
+  backend2:
+    <<: *backend
+    container_name: backend2
+    hostname: backend2
+    environment:
+      INSTANCE_NAME: backend2
+      WORK_DELAY_SECONDS: "0.05"
+
+  lb:
+    image: nginx:1.27-alpine
+    container_name: lb
+    ports:
+      - "6120:6120"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend1
+      - backend2
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge

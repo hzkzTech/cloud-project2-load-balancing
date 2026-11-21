@@ -1,0 +1,128 @@
+
+===== PAGE 1 =====
+CISC 7403 Project II (16%): Scalable Web Service with Load Balancing
+Horizontal Scaling and Fault Tolerance
+1 Background
+Cloud services often need to handle changing request loads and remain available when individual service
+instances fail. One common approach is to run multiple identical service instances behind a load balancer. The
+load balancer distributes requests among available instances, while horizontal scaling increases service
+capacity by adding replicas. Container technologies such as Docker make it easy to package and replicate
+services, and Docker Compose can manage a multi-container deployment.
+2 Objective
+By the end of this project, you should be able to containerize a simple backend service, deploy multiple
+instances with Docker Compose, configure a load balancer, observe request distribution, test service
+availability after a backend failure, and perform a simple performance comparison between one and two
+backend instances.
+3 Requirements
+3.1 Cloud Computing and Container Setup
+• Install Docker on the virtual machine provided for this course.
+• Build a scalable web service based on the architecture and requirements below.
+You need to deploy 3 containers: one Nginx load balancer and two backend service instances. Backend 1 and
+Backend 2 should run the same application image.
+
+===== PAGE 2 =====
+1. Backend service
+Run two backend containers, named for example backend1 and backend2. Both containers should be created
+from the same Docker image and run the same application.
+• The backend should provide two simple HTTP endpoints: / and /work.
+• The / endpoint should return a simple response identifying which backend instance handled the request,
+using the container hostname or an instance name.
+• The /work endpoint should simulate a small amount of processing (approximately 50 ms) before returning a
+response. This endpoint will be used for the performance experiment. For the performance experiment,
+each backend container must run a single server process with request-level multithreading disabled,
+so that it processes at most one /work request at a time. If Flask is used, run the application with
+threaded=False.
+For example, in Python the /work handler may simply contain:
+time.sleep(0.05)
+• Backend containers do not need to expose ports to the host machine. They only need to be reachable by
+the load balancer through the Docker Compose network.
+• Backend request logs should be visible using docker logs or docker compose logs.
+The backend application may be very simple. A graphical frontend, database, user authentication, and
+additional application features are not required.
+2. Load balancer service
+Required external port: 6120.
+Use Nginx as a separate load balancer container. The load balancer should accept requests from the user and
+forward them to Backend 1 or Backend 2.
+• Configure both backend containers as upstream servers.
+• Use the Docker Compose service names to reach the backend containers.
+• Only the load balancer needs to expose an external port to the host machine.
+• The service should remain accessible when either one of the two backend containers is stopped.
+3. Docker Compose deployment
+• Create a Dockerfile for the backend service.
+• Use an official Nginx image for the load balancer service.
+• Create a docker-compose.yml file to deploy the complete system.
+• Backend 1 and Backend 2 should use the same backend image.
+• Only port 6120 needs to be exposed to the host machine.
+The complete system should be startable with a single command:
+docker compose up --build
+3.2 Load Balancing Verification
+After starting all three containers, send multiple requests to the load balancer at port 6120. The responses
+should show that requests can be handled by both backend instances.
+For example, you may send repeated requests using curl or a simple script. Include brief evidence in the report
+showing that both backends received requests. Strict alternating order is not required.
+3.3 Fault Tolerance Experiment
+Test whether the service remains available when one backend instance is unavailable:
+• Start the complete system and verify that both backends can receive requests.
+• Stop either Backend 1 or Backend 2.
+
+===== PAGE 3 =====
+• Send requests to port 6120 again and verify that the service can still respond through the remaining
+backend.
+• Restart the stopped backend container.
+Automatic container restart, advanced health checks, and high-availability Nginx deployment are not required.
+3.4 Simple Performance Experiment
+Perform a small benchmark to compare the service with one backend instance and with two backend
+instances. Use wrk to send concurrent requests to the /work endpoint through the Nginx load balancer.
+Use the same workload configuration for both experiments. For example:
+wrk -t2 -c20 -d10s http://localhost:6120/work
+Report the following two metrics:
+• request throughput (requests per second);
+• average request latency.
+A suggested result table is shown below. No specific speedup is required; briefly explain the result you
+observe.
+Configuration Throughput (req/s) Average Latency (ms)
+1 backend
+2 backends
+3.5 Scoring
+Item Weight
+Backend service and container image 15%
+Nginx load balancer 20%
+Docker Compose deployment and networking 20%
+Load balancing verification 10%
+Fault tolerance experiment 10%
+Performance experiment 10%
+Report 15%
+3.6 Deliverables
+Write a brief report of no more than 3 pages, excluding the cover page if used. The report should include:
+(1) A short description of the system architecture and the role of each container.
+(2) A brief description of how Docker Compose and Nginx are used to deploy and connect the services.
+(3) Evidence and results for load balancing, backend failure, and the simple performance experiment.
+(4) A short discussion of the observed results, any challenges encountered, and a member contribution
+statement.
+*In addition to the report, submit the complete source code, Dockerfile, Nginx configuration file, and
+docker-compose.yml for grading.
+4 Reference
+• Docker documentation: https://docs.docker.com/
+• Nginx HTTP load balancing: https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/
+--- TABLE 1 ---
+ | Configuration |  |  | Throughput (req/s) |  |  | Average Latency (ms) | 
+1 backend |  |  |  |  |  |  |  | 
+2 backends |  |  |  |  |  |  |  | 
+--- TABLE 2 ---
+ | Item |  |  | Weight | 
+Backend service and container image |  |  | 15% |  | 
+Nginx load balancer |  |  | 20% |  | 
+Docker Compose deployment and networking |  |  | 20% |  | 
+Load balancing verification |  |  | 10% |  | 
+Fault tolerance experiment |  |  | 10% |  | 
+Performance experiment |  |  | 10% |  | 
+Report |  |  | 15% |  | 
+
+===== PAGE 4 =====
+• Python tutorial: https://www.w3schools.com/python/ or https://www.runoob.com/python/python-
+tutorial.html
+5 Basic Tutorials
+• Docker install: https://docs.docker.com/engine/install/ubuntu/
+• Docker build: https://docs.docker.com/build/building/packaging/
+• Docker Compose: https://docs.docker.com/compose/
+• Nginx load balancing: https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/
