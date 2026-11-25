@@ -225,6 +225,8 @@ INPUT /usr/local/texlive/2026/texmf-dist/tex/generic/uniquecounter/uniquecounter
 INPUT /usr/local/texlive/2026/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/float/float.sty
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/float/float.sty
+INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/titlesec/titlesec.sty
+INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/titlesec/titlesec.sty
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmr.fd
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmr.fd
@@ -304,11 +306,6 @@ INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/lm/ec-lmbx10.tfm
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/local/texlive/2026/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT ./figures/docker_compose_ps.png
-INPUT ./figures/docker_compose_ps.png
-INPUT ./figures/docker_compose_ps.png
-INPUT ./figures/docker_compose_ps.png
-INPUT ./figures/docker_compose_ps.png
 INPUT ./figures/shot_load_balancing.png
 INPUT ./figures/shot_load_balancing.png
 INPUT ./figures/shot_load_balancing.png

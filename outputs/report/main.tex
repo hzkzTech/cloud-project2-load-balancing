@@ -37,6 +37,19 @@
 \setlength{\emergencystretch}{2em}
 \raggedbottom
 
+\usepackage{titlesec}
+
+\titlespacing*{\section}
+{0pt}    % 左缩进，0=不缩进
+{1ex}    % 标题【上面】空多少
+{0.6ex}  % 标题【下面】到正文空多少
+
+\titlespacing*{\paragraph}
+{0pt}    % 左缩进，0=不缩进
+{0.6ex}    % 标题【上面】空多少
+{0.6ex}  % 标题【下面】到正文空多少
+
+
 \definecolor{codebg}{RGB}{247,247,249}
 \lstdefinestyle{code}{
   backgroundcolor=\color{codebg},
@@ -219,13 +232,6 @@ networks:
   appnet: {driver: bridge}
 \end{lstlisting}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\textwidth]{figures/docker_compose_ps.png}
-\caption{\texttt{docker compose ps}: one Nginx load balancer in front of two interchangeable backend replicas}
-\label{fig:lb}
-\end{figure}
-
 %=====================================================================
 \section{Load-Balancing Verification}
 %=====================================================================
@@ -235,7 +241,7 @@ the \texttt{instance} field of each response was recorded with
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\textwidth]{figures/shot_load_balancing.png}
+\includegraphics[width=0.65\textwidth]{figures/shot_load_balancing.png}
 \caption{Ten consecutive requests through port 6120, answered alternately by
          \texttt{backend1} and \texttt{backend2}.}
 \label{fig:lb}
@@ -256,16 +262,16 @@ while the balancer kept running, the requests were repeated, and finally
 \texttt{docker start backend2} brought the replica back. 
 
 All 6 requests sent during the outage succeeded and were served by
-\texttt{backend1}. After the restart the alternation returned.
+\texttt{backend1}. After the restart the alternation returned Figure~\ref{fig:fault}.
 
 \begin{figure}[htbp]
 \centering
-\begin{subfigure}[t]{0.48\textwidth}
+\begin{subfigure}[t]{0.63\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figures/shot_fault_stopped.png}
   \caption{\texttt{backend2} stopped.}
 \end{subfigure}\hfill
-\begin{subfigure}[t]{0.48\textwidth}
+\begin{subfigure}[t]{0.63\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figures/shot_fault_restored.png}
   \caption{\texttt{backend2} restarted.}
@@ -308,19 +314,16 @@ $1/0.05 = 20$ requests per second, and 20 queued requests imply an average delay
 of roughly $20 \times 50\,\mathrm{ms}$. The second replica doubles the capacity,
 so throughput should roughly double and the average queueing delay should
 roughly halve, which is what Table~\ref{tab:perf} shows
-(2.11 $\times$ throughput, 0.49 $\times$ lower latency). The
-measured values stay below these ideals because Nginx, the Docker network stack
-and the Python HTTP server add per-request overhead and because the concurrency
-is not split perfectly evenly between the replicas.
+(2.11 $\times$ throughput, 0.49 $\times$ lower latency). 
 
 \begin{figure}[htbp]
 \centering
-\begin{subfigure}[t]{0.48\textwidth}
+\begin{subfigure}[t]{0.8\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figures/shot_wrk_2backends.png}
   \caption{\texttt{2 backends} running}
 \end{subfigure}\hfill
-\begin{subfigure}[t]{0.48\textwidth}
+\begin{subfigure}[t]{0.8\textwidth}
   \centering
   \includegraphics[width=\linewidth]{figures/shot_wrk_1backend.png}
   \caption{\texttt{1 backend} running}
@@ -342,20 +345,8 @@ machine, the experiment shows the scaling behaviour of the application rather
 than the resilience of a multi-host cluster; Nginx remains a single point of
 failure and no health checks or automatic restarts are configured, as the
 assignment does not require them.
-
-
-\paragraph{Challenges} Three issues had to be handled. (i)~Flask threads requests by default, so
-\texttt{threaded=False} was set explicitly, otherwise one container would answer
-several \texttt{/work} requests in parallel and the comparison would be
-meaningless. (ii)~When a backend stops, Nginx briefly holds a connection to a
-dead address; the failure stays invisible to the client only because
-\texttt{proxy\_next\_upstream} is enabled and the connect timeout is short.
-(iii)~The single-backend run must really remove the second upstream: leaving a
-dead server in the pool silently redirects load and inflates the baseline. The
-benchmark also has to run on an idle VM, since CPU contention distorts both
-metrics.
-
-
+\paragraph{Challenges}
+Three issues were encountered in the experiment. (i) Flask threads requests by default, so we explicitly set \texttt{threaded=False}. Otherwise one container would answer several \texttt{/work} requests in parallel and the comparison would be meaningless. (ii) When a backend stops, Nginx briefly holds a connection to a dead address; clients observe no error only because \texttt{proxy\_next\_upstream} is enabled and the connect timeout is short. (iii) For performance comparison, the second backend must be fully removed from the upstream configuration in the single-backend trial. Leaving a dead server in the pool causes silent traffic redistribution and overestimates the baseline throughput. We prepared a dedicated single-backend configuration and restarted the deployment to carry out the benchmark comparison.
 \paragraph{Contributions} LU HANZHANG implemented the backend service and
 Dockerfile, the Nginx configuration and the load-balancing and fault tests
 (50\%); CHEN XINGCHEN set up the Compose deployment and the

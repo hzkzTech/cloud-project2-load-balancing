@@ -9,30 +9,28 @@
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Container inventory.}}{1}{table.caption.2}\protected@file@percent }
 \newlabel{tab:containers}{{1}{1}{Container inventory}{table.caption.2}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Implementation}{1}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Backend service and image.}{1}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Backend service and image.}{1}{section.2}\protected@file@percent }
 \newlabel{lst:app}{{1}{1}{Request handler and start-up (\texttt {backend/app.py}, abridged)}{lstlisting.1}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {1}{\ignorespaces Request handler and start-up (\texttt  {backend/app.py}, abridged).}}{1}{lstlisting.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Nginx load balancer.}{1}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Nginx load balancer.}{1}{lstnumber.1.8}\protected@file@percent }
 \newlabel{lst:nginx}{{2}{1}{Load-balancer configuration (\texttt {nginx/nginx.conf}, abridged)}{lstlisting.2}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {2}{\ignorespaces Load-balancer configuration (\texttt  {nginx/nginx.conf}, abridged).}}{1}{lstlisting.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Compose deployment and networking.}{2}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Compose deployment and networking.}{1}{lstnumber.2.12}\protected@file@percent }
 \newlabel{lst:compose}{{3}{2}{Excerpt of \texttt {docker-compose.yml}}{lstlisting.3}{}}
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {3}{\ignorespaces Excerpt of \texttt  {docker-compose.yml}.}}{2}{lstlisting.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \texttt  {docker compose ps}: one Nginx load balancer in front of two interchangeable backend replicas}}{2}{figure.caption.6}\protected@file@percent }
-\newlabel{fig:lb}{{2}{2}{\texttt {docker compose ps}: one Nginx load balancer in front of two interchangeable backend replicas}{figure.caption.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Load-Balancing Verification}{2}{section.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Ten consecutive requests through port 6120, answered alternately by \texttt  {backend1} and \texttt  {backend2}.}}{2}{figure.caption.7}\protected@file@percent }
-\newlabel{fig:lb}{{3}{2}{Ten consecutive requests through port 6120, answered alternately by \texttt {backend1} and \texttt {backend2}}{figure.caption.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Ten consecutive requests through port 6120, answered alternately by \texttt  {backend1} and \texttt  {backend2}.}}{2}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:lb}{{2}{2}{Ten consecutive requests through port 6120, answered alternately by \texttt {backend1} and \texttt {backend2}}{figure.caption.3}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {4}Fault-Tolerance Experiment}{2}{section.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Performance Experiment}{2}{section.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Fault tolerance: while one replica is down the service still answers through \texttt  {backend1} (left), and after the restart both replicas receive traffic again (right).}}{3}{figure.caption.8}\protected@file@percent }
-\newlabel{fig:fault}{{4}{3}{Fault tolerance: while one replica is down the service still answers through \texttt {backend1} (left), and after the restart both replicas receive traffic again (right)}{figure.caption.8}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Throughput and average latency of \texttt  {/work} (\texttt  {wrk -t2 -c20 -d10s}, same VM for both runs).}}{3}{table.caption.9}\protected@file@percent }
-\newlabel{tab:perf}{{2}{3}{Throughput and average latency of \texttt {/work} (\texttt {wrk -t2 -c20 -d10s}, same VM for both runs)}{table.caption.9}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Performance experiment: \texttt  {wrk} output for the two configurations.}}{3}{figure.caption.10}\protected@file@percent }
-\newlabel{fig:wrk}{{5}{3}{Performance experiment: \texttt {wrk} output for the two configurations}{figure.caption.10}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Fault tolerance: while one replica is down the service still answers through \texttt  {backend1} (left), and after the restart both replicas receive traffic again (right).}}{2}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:fault}{{3}{2}{Fault tolerance: while one replica is down the service still answers through \texttt {backend1} (left), and after the restart both replicas receive traffic again (right)}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Performance Experiment}{3}{section.5}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Throughput and average latency of \texttt  {/work} (\texttt  {wrk -t2 -c20 -d10s}, same VM for both runs).}}{3}{table.caption.5}\protected@file@percent }
+\newlabel{tab:perf}{{2}{3}{Throughput and average latency of \texttt {/work} (\texttt {wrk -t2 -c20 -d10s}, same VM for both runs)}{table.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Performance experiment: \texttt  {wrk} output for the two configurations.}}{3}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:wrk}{{4}{3}{Performance experiment: \texttt {wrk} output for the two configurations}{figure.caption.6}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {6}Discussion, Challenges and Contributions}{3}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Discussion}{3}{section*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Challenges}{3}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Contributions}{3}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Discussion}{3}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Challenges}{3}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Contributions}{3}{section.6}\protected@file@percent }
 \gdef \@abspage@last{4}
