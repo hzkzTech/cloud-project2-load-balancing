@@ -60,7 +60,7 @@
 \begin{titlepage}
   \centering
   \vspace*{3cm}
-  {\Large\bfseries CISC 7403 --- Cloud Computing\par}
+  {\Large\bfseries CISC 7403\par}
   \vspace{0.5cm}
   {\large Project II\par}
   \vspace{2cm}
@@ -69,15 +69,12 @@
   {\large Horizontal Scaling and Fault Tolerance\par}
   \vspace{2.2cm}
   \begin{tabular}{rl}
-    \textbf{Team number:}    & \pending{XX} \\[3pt]
-    \textbf{Team members:}   & \pending{Name 1 (student ID)} \\
-                             & \pending{Name 2 (student ID)} \\[3pt]
+    \textbf{Team number:}    & Group 1 \\[3pt]
+    \textbf{Team members:}   & LU HANZHANG (MC653377) \\
+                             & CHEN XINGCHEN (MC639310) \\[3pt]
     \textbf{Course section:} & CISC 7403 \\[3pt]
-    \textbf{Date:}           & \pending{DD Month 2026} \\
+    \textbf{Date:}           & 15 Nov. 2026 \\
   \end{tabular}
-  \vfill
-  {\footnotesize All measurements and screenshots in this report were produced on
-   the course virtual machine using the code submitted together with it.}
 \end{titlepage}
 
 %=====================================================================
@@ -183,9 +180,7 @@ server {
         proxy_set_header Host            $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_connect_timeout 1s;
-        proxy_next_upstream error timeout http_502 http_503 http_504;
-    }
-}
+        proxy_next_upstream error timeout http_502 http_503 http_504;}}
 \end{lstlisting}
 
 \paragraph{Compose deployment and networking.}
@@ -224,6 +219,13 @@ networks:
   appnet: {driver: bridge}
 \end{lstlisting}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figures/docker_compose_ps.png}
+\caption{\texttt{docker compose ps}: one Nginx load balancer in front of two interchangeable backend replicas}
+\label{fig:lb}
+\end{figure}
+
 %=====================================================================
 \section{Load-Balancing Verification}
 %=====================================================================
@@ -233,14 +235,14 @@ the \texttt{instance} field of each response was recorded with
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.60\textwidth]{figures/shot_load_balancing.png}
+\includegraphics[width=\textwidth]{figures/shot_load_balancing.png}
 \caption{Ten consecutive requests through port 6120, answered alternately by
          \texttt{backend1} and \texttt{backend2}.}
 \label{fig:lb}
 \end{figure}
 
-Of the \pending{N} requests, \pending{n1} were answered by \texttt{backend1} and
-\pending{n2} by \texttt{backend2}. The split is close to even, so both replicas
+Of the 10 requests, 5 were answered by \texttt{backend1} and
+5 by \texttt{backend2}. The split is close to even, so both replicas
 are registered in the pool and Nginx really distributes the traffic instead of
 always picking the first server. Strict alternation is not guaranteed with
 reused connections, so only the overall balance is interpreted.
@@ -248,9 +250,13 @@ reused connections, so only the overall balance is interpreted.
 %=====================================================================
 \section{Fault-Tolerance Experiment}
 %=====================================================================
+
 With both replicas serving traffic, \texttt{docker stop backend2} was executed
 while the balancer kept running, the requests were repeated, and finally
-\texttt{docker start backend2} brought the replica back.
+\texttt{docker start backend2} brought the replica back. 
+
+All 6 requests sent during the outage succeeded and were served by
+\texttt{backend1}. After the restart the alternation returned.
 
 \begin{figure}[htbp]
 \centering
@@ -270,15 +276,6 @@ while the balancer kept running, the requests were repeated, and finally
 \label{fig:fault}
 \end{figure}
 
-All \pending{k} requests sent during the outage succeeded and were served by
-\texttt{backend1}. The first request routed to the dead upstream failed at
-connection level and was transparently retried on the healthy server, so the
-client saw no error but may have observed a single slower response
-(\pending{ms} average during the outage versus \pending{ms} in the healthy
-state). After the restart the alternation returned without restarting Nginx,
-because upstream names are resolved through Docker's DNS on every new
-connection.
-
 %=====================================================================
 \section{Performance Experiment}
 %=====================================================================
@@ -297,10 +294,10 @@ request can be retried onto another instance.
 \label{tab:perf}
 \begin{tabular}{@{}lcc@{}}
 \toprule
-Configuration & Throughput (req/s) & Average Latency (ms) \\
+Configuration & Throughput (req/s) & Average Latency (s) \\
 \midrule
-1 backend  & \pending{xx.x} & \pending{xxx.x} \\
-2 backends & \pending{xx.x} & \pending{xxx.x} \\
+1 backend  & 16.67 & 1.07 \\
+2 backends & 37.21 & 0.52 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -311,15 +308,31 @@ $1/0.05 = 20$ requests per second, and 20 queued requests imply an average delay
 of roughly $20 \times 50\,\mathrm{ms}$. The second replica doubles the capacity,
 so throughput should roughly double and the average queueing delay should
 roughly halve, which is what Table~\ref{tab:perf} shows
-(\pending{x.x}$\times$ throughput, \pending{x.x}$\times$ lower latency). The
+(2.11 $\times$ throughput, 0.49 $\times$ lower latency). The
 measured values stay below these ideals because Nginx, the Docker network stack
 and the Python HTTP server add per-request overhead and because the concurrency
 is not split perfectly evenly between the replicas.
 
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/shot_wrk_2backends.png}
+  \caption{\texttt{2 backends} running}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.48\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/shot_wrk_1backend.png}
+  \caption{\texttt{1 backend} running}
+\end{subfigure}
+\caption{Performance experiment: \texttt{wrk} output for the two configurations.}
+\label{fig:wrk}
+\end{figure}
+
 %=====================================================================
 \section{Discussion, Challenges and Contributions}
 %=====================================================================
-The balancer spread the traffic evenly, the service stayed reachable during the
+\paragraph{Discussion} The balancer spread the traffic evenly, the service stayed reachable during the
 failure test with no client-visible error, and the second replica roughly
 doubled the throughput of this sleep-bound workload. This is the expected
 behaviour for single-threaded instances whose cost is dominated by a fixed
@@ -330,7 +343,8 @@ than the resilience of a multi-host cluster; Nginx remains a single point of
 failure and no health checks or automatic restarts are configured, as the
 assignment does not require them.
 
-Three issues had to be handled. (i)~Flask threads requests by default, so
+
+\paragraph{Challenges} Three issues had to be handled. (i)~Flask threads requests by default, so
 \texttt{threaded=False} was set explicitly, otherwise one container would answer
 several \texttt{/work} requests in parallel and the comparison would be
 meaningless. (ii)~When a backend stops, Nginx briefly holds a connection to a
@@ -341,20 +355,19 @@ dead server in the pool silently redirects load and inflates the baseline. The
 benchmark also has to run on an idle VM, since CPU contention distorts both
 metrics.
 
-\paragraph{Contributions.} \pending{Name 1} implemented the backend service and
+
+\paragraph{Contributions} LU HANZHANG implemented the backend service and
 Dockerfile, the Nginx configuration and the load-balancing and fault tests
-(\pending{xx}\%); \pending{Name 2} set up the Compose deployment and the
+(50\%); CHEN XINGCHEN set up the Compose deployment and the
 single-backend variant, ran the benchmark and wrote this report
-(\pending{xx}\%). The signed Role Declaration page is attached to the submission.
+(50\%). The signed Role Declaration page is attached to the submission.
 
 {\footnotesize
 \subsection*{References}
 [1] Docker Inc., \emph{Docker documentation}, \url{https://docs.docker.com/}.\par
 [2] Docker Inc., \emph{Docker Compose}, \url{https://docs.docker.com/compose/}.\par
-[3] F5, Inc., \emph{NGINX HTTP load balancing},
-    \url{https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/}.\par
-[4] W.~Glozer, \emph{wrk --- modern HTTP benchmarking tool},
-    \url{https://github.com/wg/wrk}.\par
+[3] F5, Inc., \emph{NGINX HTTP load balancing},\url{https://docs.nginx.com/nginx/admin-guide/load-balancer/}.\par
+[4] W.~Glozer, \emph{wrk --- modern HTTP benchmarking tool},\url{https://github.com/wg/wrk}.\par
 }
 
 \end{document}

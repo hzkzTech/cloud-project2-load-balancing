@@ -19,8 +19,7 @@ identical Flask backends (`backend1`, `backend2`) built from the same image
 │   ├── fault_tolerance.sh  # guided stop/restart walkthrough
 │   └── bench.sh            # wrk benchmark for 2 vs 1 backend
 ├── docker-compose.yml          # lb + backend1 + backend2
-└── docker-compose.single.yml   # lb + backend1 (benchmark baseline)
-```
+└── docker-compose.single.yml   # lb + backend1
 
 ## Run
 
